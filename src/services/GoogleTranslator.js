@@ -11,13 +11,17 @@ export default class GoogleTranslator extends BaseTranslator {
       this.config = config;
     }
 
-    translate(text, lang = '') {
-      if (lang)  this.config.targetLanguage = lang;
+    translate(text) {
       const url = `${GOOGLE.TRANSLATE}${this.config.apiKey}`;
       const data = this.createTheRequest(text);
 
       return HTTPMethods.post(url, data)
-        .then(translation => translation.data.translations[0].translatedText)
+        .then(translation => {
+          if(translation?.data?.translations[0]?.translatedText) {
+            return translation?.data?.translations[0]?.translatedText
+          };
+          return text
+        })
         .then(htmlEntities);
     }
 
